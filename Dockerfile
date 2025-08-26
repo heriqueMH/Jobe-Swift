@@ -1,40 +1,47 @@
 FROM trampgeek/jobeinabox:latest
 USER root
+SHELL ["/bin/bash", "-euo", "pipefail", "-c"]
 
-# 1) deps essenciais + runtime do Swift (inclui libs que o swiftc precisa)
+# Debug opcional: confirmar versão da base
+RUN cat /etc/os-release
+
+# 1) Dependências extras que o Swift precisa
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    wget ca-certificates unzip curl git nano less procps iproute2 jq \
+    wget ca-certificates curl unzip git nano less procps iproute2 jq \
     build-essential clang libicu-dev libcurl4-openssl-dev libxml2 libsqlite3-0 libedit2 tzdata \
-    libncurses6 libtinfo6 \
- && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+    libncurses6 libtinfo6 libatomic1 libbsd0 \
+ && rm -rf /var/lib/apt/lists/*
 
-# 2) Swift 6.1.2 (Ubuntu 24.04, amd64)
-RUN wget -q https://download.swift.org/swift-6.1.2-release/ubuntu2404/swift-6.1.2-RELEASE/swift-6.1.2-RELEASE-ubuntu24.04.tar.gz \
- && tar -xzf swift-6.1.2-RELEASE-ubuntu24.04.tar.gz \
- && mv swift-6.1.2-RELEASE-ubuntu24.04 /usr/local/swift-6.1.2 \
- && ln -sf /usr/local/swift-6.1.2/usr/bin/swiftc /usr/local/bin/swiftc \
- && ln -sf /usr/local/swift-6.1.2/usr/bin/swift  /usr/local/bin/swift \
- && rm -f swift-6.1.2-RELEASE-ubuntu24.04.tar.gz
+# 2) Instalar Swift 6.1.2 (Ubuntu 24.04)
+ARG SWIFT_TARBALL_URL="https://download.swift.org/swift-6.1.2-release/ubuntu2404/swift-6.1.2-RELEASE/swift-6.1.2-RELEASE-ubuntu24.04.tar.gz"
+ARG SWIFT_DIR="/usr/local/swift"
 
-# 3) sandboxes + cache do clang (Swift precisa escrever em ModuleCache)
-RUN groupadd -r jobe || true \
- && chmod 755 /home \
+RUN wget -q "${SWIFT_TARBALL_URL}" -O /tmp/swift.tar.gz \
+ && tar -xzf /tmp/swift.tar.gz -C /tmp \
+ && SWIFT_EXTRACTED="$(tar -tzf /tmp/swift.tar.gz | head -1 | cut -f1 -d"/")" \
+ && mv "/tmp/${SWIFT_EXTRACTED}" "${SWIFT_DIR}" \
+ && ln -sf "${SWIFT_DIR}/usr/bin/swiftc" /usr/local/bin/swiftc \
+ && ln -sf "${SWIFT_DIR}/usr/bin/swift"  /usr/local/bin/swift \
+ && rm -f /tmp/swift.tar.gz
+
+# 3) Garantir caches para www-data e jobe00..07
+RUN install -d -m 700 -o www-data -g www-data /var/www/.cache/clang/ModuleCache \
  && for i in 00 01 02 03 04 05 06 07; do \
-      id jobe$i >/dev/null 2>&1 || useradd -m -s /usr/sbin/nologin -g jobe jobe$i; \
       install -d -m 700 -o jobe$i -g jobe /home/jobe$i/.cache/clang/ModuleCache; \
-      chown -R jobe$i:jobe /home/jobe$i/.cache; \
-      chmod -R 700 /home/jobe$i/.cache; \
     done
 
-# 4) copia o handler do Swift do PRÓPRIO repositório
-#    (mantenha jobe-langs/SwiftTask.php no repo)
-COPY jobe-langs/SwiftTask.php /var/www/html/jobe/app/Libraries/
+# 4) Copiar handler do Swift
+#    Certifique-se que jobe-langs/SwiftTask.php existe no build context
+#    e tem namespace correto: `<?php namespace Jobe; ?>`
+COPY jobe-langs/SwiftTask.php /var/www/html/jobe/app/Libraries/SwiftTask.php
 RUN chown www-data:www-data /var/www/html/jobe/app/Libraries/SwiftTask.php \
  && chmod 0644 /var/www/html/jobe/app/Libraries/SwiftTask.php
 
-# 5) limpeza final + healthcheck
-RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+# 5) Forçar rebuild da lista de linguagens
+RUN rm -f /tmp/jobe_language_cache_file || true
+
+# 6) Healthcheck: valida se Swift aparece
 HEALTHCHECK --interval=30s --timeout=5s --retries=5 \
-  CMD curl -fsS http://localhost/jobe/index.php/restapi/languages || exit 1
+  CMD curl -fsS http://localhost/jobe/index.php/restapi/languages | grep -q '"swift"' || exit 1
 
 EXPOSE 80
