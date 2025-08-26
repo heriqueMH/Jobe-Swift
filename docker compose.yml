@@ -1,0 +1,17 @@
+services:
+  jobe-swift:
+    build: .
+    image: jobe-swift:runner
+    container_name: jobe-swift
+    restart: unless-stopped
+    networks:
+      - moodle-docker_default
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://jobe-swift/jobe/index.php/restapi/languages"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+
+networks:
+  moodle-docker_default:
+    external: true
