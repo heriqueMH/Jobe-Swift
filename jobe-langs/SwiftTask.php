@@ -8,8 +8,8 @@ namespace Jobe;
 class SwiftTask extends LanguageTask
 {
     // Caminho do compilador dentro do contêiner Docker
-    const SWIFT_BIN_PATH = '/opt/swift/usr/bin/';
-
+    const SWIFT_BIN_PATH = '/usr/local/bin/';
+    
     public function __construct($filename, $input, $params)
     {
         parent::__construct($filename, $input, $params);
