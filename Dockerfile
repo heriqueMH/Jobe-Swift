@@ -28,7 +28,7 @@ RUN groupadd -r jobe || true \
 
 # 4) copia o handler do Swift do PRÓPRIO repositório
 #    (mantenha jobe-langs/SwiftTask.php no repo)
-COPY jobe-langs/SwiftTask.php /var/www/html/jobe/app/Libraries/SwiftTask.php
+COPY jobe-langs/SwiftTask.php /var/www/html/jobe/app/Libraries/
 RUN chown www-data:www-data /var/www/html/jobe/app/Libraries/SwiftTask.php \
  && chmod 0644 /var/www/html/jobe/app/Libraries/SwiftTask.php
 
