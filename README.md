@@ -12,13 +12,13 @@ Ele é baseado no `jobeinabox` oficial, com as seguintes extensões:
 - Arquivos prontos para uso com **Dockerfile** e **docker-compose.yml**.
 
 
-## 🔹 Pontos Críticos
+## 🔹 Pontos Críticos:
 
--⚠️ Pacotes no apt-get: sem clang, libicu-dev, libcurl4-openssl-dev → Swift não compila.
--⚠️ URL do Swift: precisa bater com a distro (Ubuntu 24.04 = ubuntu2404).
--⚠️ Symlinks: sem swiftc em /usr/local/bin, o Jobe não encontra o compilador.
--⚠️ SwiftTask.php: deve estar no build context → se faltar, imagem sobe sem suporte a Swift.
--⚠️ Healthcheck: garante que o container só fica “healthy” quando o Swift já aparece no Jobe.
+⚠️ Pacotes no apt-get: sem clang, libicu-dev, libcurl4-openssl-dev → Swift não compila.
+⚠️ URL do Swift: precisa bater com a distro (Ubuntu 24.04 = ubuntu2404).
+⚠️ Symlinks: sem swiftc em /usr/local/bin, o Jobe não encontra o compilador.
+⚠️ SwiftTask.php: deve estar no build context → se faltar, imagem sobe sem suporte a Swift.
+⚠️ Healthcheck: garante que o container só fica “healthy” quando o Swift já aparece no Jobe.
 
 
 ## 📦 Como usar
