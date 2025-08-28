@@ -1,0 +1,25 @@
+Após subir o container, crie uma pasta SwiftTask.php - nano var/www/html/jobe/app/Libraries.
+
+O arquivo deve ficar dentro da pasta Libraries.
+
+Depois de criar o arquivo, limpe o cache - rm -f /tmp/jobe_language_cache_file
+
+Verifique se o Swift aparece na lista de linguagens - curl http://localhost/jobe/index.php/restapi/languages
+
+Saída esperada - [["c","13.3.0"],["cpp","13.3.0"],["java","21.0.5"],["nodejs","18.19.1"],["octave","8.4.0"],
+["pascal","3.2.2"],["php","8.3.6"],["python3","3.12.3"],["swift","6.1.2"]
+
+--------------------------------------------------------
+A imagem já contem o Jobe configurado.
+
+Versão Ubuntu - 24.04
+
+Swift version 6.1.2 (swift-6.1.2-RELEASE)
+
+Swiftc version 6.1.2 (swift-6.1.2-RELEASE)
+
+Importante liberar o acesso local, dentro do moodle.
+
+--------------------------------------------------------
+
+No moodle configure o nome do Jobe - jobe-swift (Denifinido pelo no do servico no docker Compose/Container)
