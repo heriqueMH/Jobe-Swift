@@ -8,7 +8,7 @@ Este repositório fornece um container Docker personalizado do **Jobe**, configu
 Ele é baseado no `jobeinabox` oficial, com as seguintes extensões:
 - Instalação do **Swift 6.1.2** (Ubuntu 24.04, amd64).
 - Criação do handler `swift_task.php` para permitir a compilação/execução de Swift.
-- Ajustes de permissões em sandboxes (`jobe00..jobe07`) para cache do `clang`.
+- Ajustes de permissões para a pasra `SwiftTask.php`.
 - Arquivos prontos para uso com **Dockerfile** e **docker-compose.yml**.
 
 ## 📦 Como usar
