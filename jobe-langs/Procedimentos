@@ -2,6 +2,11 @@ Após subir o container, crie uma pasta SwiftTask.php - nano var/www/html/jobe/a
 
 O arquivo deve ficar dentro da pasta Libraries.
 
+Permissoes de pasta - 
+    - chown www-data:www-data /var/www/html/jobe/app/Libraries/SwiftTask.php
+    - chmod 0644 /var/www/html/jobe/app/Libraries/SwiftTask.php
+
+
 Depois de criar o arquivo, limpe o cache - rm -f /tmp/jobe_language_cache_file
 
 Verifique se o Swift aparece na lista de linguagens - curl http://localhost/jobe/index.php/restapi/languages
